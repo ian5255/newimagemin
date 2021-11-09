@@ -1,0 +1,32 @@
+{
+  "name": "newimagemin",
+  "version": "1.0.0",
+  "description": "image compress",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "build": "pkg index.js -t node12-linux -c package.json"
+  },
+  "keywords": [
+    "image",
+    "compress"
+  ],
+  "author": "Ian",
+  "license": "ISC",
+  "dependencies": {
+    "commander": "^8.3.0",
+    "fs": "0.0.1-security",
+    "globby": "^12.0.2",
+    "graceful-fs": "^4.2.8",
+    "heic-convert": "^1.2.4",
+    "pkg": "^5.4.1",
+    "sharp": "^0.29.2"
+  },
+  "devDependencies": {},
+  "pkg": {
+    "assets": [
+      "node_modules/**/*"
+    ]
+  }
+}
