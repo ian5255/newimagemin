@@ -48,8 +48,6 @@ async function resizeImage(sourcePath, destinationPath, quality, file, buffer) {
   }
 }
 
-// parentPort.postMessage(WorkerData)
-
 /* 
 paramsObj: {
   fileArr: workerFileArr,
