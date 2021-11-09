@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
+    "tt": "node index.js -Q 70 -I src/assets/origin -O src/assets/result -T 3",
     "build": "pkg index.js -t node12-linux -c package.json"
   },
   "keywords": [

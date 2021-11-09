@@ -27,7 +27,7 @@ async function resizeImage(sourcePath, destinationPath, quality, file, buffer) {
         .webp({
           // lossless: true,
           // reductionEffort: 0,
-          // alphaQuality: 0,
+          // alphaQuality: 50,
           quality: quality
         })
         .toFile(destinationPath + '/' + fileName[0] + '.webp');
@@ -36,7 +36,7 @@ async function resizeImage(sourcePath, destinationPath, quality, file, buffer) {
         .webp({
           // lossless: true,
           // reductionEffort: 0,
-          // alphaQuality: 0,
+          // alphaQuality: 50,
           quality: quality
         })
         .toFile(destinationPath + '/' + fileName[0] + '.webp');
@@ -61,7 +61,7 @@ paramsObj: {
 }
 */
 parentPort.on('message', async paramsObj => {
-  console.log("線程開始", paramsObj.fileArr.length);
+  console.info("線程" + paramsObj.group + "開始執行...");
   const start = new Date().getTime();
   const countObj = {
     total: paramsObj.fileArr.length,
@@ -98,6 +98,6 @@ parentPort.on('message', async paramsObj => {
   const end = new Date().getTime();
   countObj.timeConsuming = (end - start) / 1000; // 統計耗時
 
-  console.info("線程處理完畢！ 費時：" + countObj.timeConsuming + "sec。處理檔案數：" + countObj.total + "。成功：" + countObj.successed + "。失敗：" + countObj.failed);
+  console.info("線程" + paramsObj.group + "已完成！ 費時：" + countObj.timeConsuming + "sec。處理檔案數：" + countObj.total + "。成功：" + countObj.successed + "。失敗：" + countObj.failed);
   parentPort.postMessage(countObj);
 });
