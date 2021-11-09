@@ -23,7 +23,10 @@
     "pkg": "^5.4.1",
     "sharp": "^0.29.2"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "@babel/core": "^7.16.0",
+    "@babel/node": "^7.16.0"
+  },
   "pkg": {
     "assets": [
       "node_modules/**/*"
