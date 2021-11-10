@@ -2,7 +2,7 @@ const sharp = require('sharp');
 const fs = require('fs');
 const convert = require('heic-convert');
 const {promisify} = require('util');
-const { WorkerData, parentPort } = require('worker_threads');
+const { parentPort } = require('worker_threads');
 
 async function readFileHandle(sourcePath) {
   return fs.readdirSync(sourcePath);
@@ -26,7 +26,7 @@ async function resizeImage(sourcePath, destinationPath, quality, file, buffer) {
         await sharp(buffer)
         .webp({
           // lossless: true,
-          // reductionEffort: 0,
+          // smartSubsample: true,
           // alphaQuality: 50,
           quality: quality
         })
@@ -35,7 +35,7 @@ async function resizeImage(sourcePath, destinationPath, quality, file, buffer) {
         await sharp(sourcePath + '/' + file)
         .webp({
           // lossless: true,
-          // reductionEffort: 0,
+          // smartSubsample: true,
           // alphaQuality: 50,
           quality: quality
         })
@@ -55,7 +55,8 @@ paramsObj: {
   end: (((i + 1) * fileNumAvg) - 1), // 結束
   sourcePath: sourcePath,
   destinationPath: destinationPath,
-  quality: quality
+  quality: quality,
+  group: group
 }
 */
 parentPort.on('message', async paramsObj => {

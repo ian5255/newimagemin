@@ -2,6 +2,7 @@ const fs = require('fs');
 const { Worker } = require('worker_threads');
 const { Command } = require('commander');
 const program = new Command();
+const worker = new Worker('./worker.js');
 
 async function readFileHandle(sourcePath) {
   return fs.readdirSync(sourcePath);
@@ -18,7 +19,7 @@ program
 
 // worker_threads ====================================================================================================
 const runService = (sourcePath, destinationPath, quality, threads, files) => {
-  if (files.length === 0) return;
+  if (files.length === 0) return false;
   return new Promise((resolve, reject) => {
     let countSuccessNum = 0; // 成功數
     let countFailedNum = 0; // 失敗數
@@ -41,7 +42,7 @@ const runService = (sourcePath, destinationPath, quality, threads, files) => {
         workerFileArr = files.slice((i * fileNumAvg), ((i + 1) * fileNumAvg)); // 切分分派的filesArr
       }
       
-      const worker = new Worker('./worker.js');
+      // const worker = new Worker('./worker.js');
       worker.postMessage({
         fileArr: workerFileArr,
         start: i, // 起始
@@ -51,33 +52,26 @@ const runService = (sourcePath, destinationPath, quality, threads, files) => {
         quality: quality,
         group: (i + 1)
       });
-
-      // 接收worker handle result
-      worker.on('message', countObj => {
-        countSuccessNum += countObj.successed; // 成功數
-        countFailedNum += countObj.failed; // 失敗數
-        countHandleNum += countObj.total; // 處理檔案數
-        countTimeConsuming += countObj.timeConsuming; // 總耗時
-        countWorkerThreadsComplete += 1; // 計算線程完成數
-
-        // 如果已回報「完成」線程數 === 開立的線程數，就彙整報告
-        if (countWorkerThreadsComplete === workerThreads) {
-          console.info("\n總耗時：" + countTimeConsuming + " sec。處理檔案總數：" + countHandleNum + "。成功：" + countSuccessNum + "。失敗：" + countFailedNum);
-          process.exit(); // 強制關閉所有進程
-        }
-      });
-      worker.on('error', err => {
-        console.info(err);
-      });
-      worker.on('exit', (code) => {
-          if (code !== 0)
-              reject(new Error(`stopped with  ${code} exit code`));
-      });
     }
+    // 接收worker handle result
+    worker.on('message', countObj => {
+      countSuccessNum += countObj.successed; // 成功數
+      countFailedNum += countObj.failed; // 失敗數
+      countHandleNum += countObj.total; // 處理檔案數
+      // countTimeConsuming += countObj.timeConsuming; // 總耗時
+      countWorkerThreadsComplete += 1; // 計算線程完成數
+
+      // 如果已回報「完成」線程數 === 開立的線程數，就彙整報告
+      if (countWorkerThreadsComplete === workerThreads) {
+        resolve(true);
+        console.info("處理檔案總數：" + countHandleNum + "。成功：" + countSuccessNum + "。失敗：" + countFailedNum);
+      }
+    });
   });
 }
 
 const run = async () => {
+  const start = new Date().getTime();
   const options = program.opts(); // 取得commandLine設定參數
 
   // step1 get sourcePath files
@@ -88,6 +82,10 @@ const run = async () => {
   }
 
   // step2 開線程分派工作
-  await runService(options.input, options.output, Number(options.quality), Number(options.thread), files);
+  const result = await runService(options.input, options.output, Number(options.quality), Number(options.thread), files);
+  const end = new Date().getTime();
+  if (result) {
+    console.info("處理時間：" + (end - start) / 1000 + " sec");
+  }
 }
 run().catch(err => console.error(err));
