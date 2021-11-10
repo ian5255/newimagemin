@@ -98,6 +98,6 @@ parentPort.on('message', async paramsObj => {
   countObj.timeConsuming = (end - start) / 1000; // 統計耗時
 
   console.info("線程" + paramsObj.group + "已完成！ 費時：" + countObj.timeConsuming + "sec。處理檔案數：" + countObj.total + "。成功：" + countObj.successed + "。失敗：" + countObj.failed);
-  sharp.cache(false); // 清緩存
+  // sharp.cache(false); // 清緩存
   parentPort.postMessage(countObj);
 });
