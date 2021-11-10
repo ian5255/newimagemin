@@ -25,12 +25,18 @@ const runService = (sourcePath, destinationPath, quality, threads, files) => {
     let countHandleNum = 0; // 處理檔案數
     let countTimeConsuming = 0; // 總耗時
     let countWorkerThreadsComplete = 0; // 計算線程完成數
+    let workerThreads = threads;
 
     const fileNumAvg = parseInt(files.length / threads);
-    for (let i = 0; i < threads; i++) {
+    // 如果開的線程數比均分數還少，那就直接把線程數設為檔案數
+    if (fileNumAvg === 0) {
+      workerThreads = files.length;
+    }
+
+    for (let i = 0; i < workerThreads; i++) {
       let workerFileArr = [];
-      if (i === (threads - 1)) {
-        workerFileArr = files.slice((i * fileNumAvg), (((i + 1) * fileNumAvg) + fileNumAvg % threads)); // 切分分派的filesArr
+      if (i === (workerThreads - 1)) {
+        workerFileArr = files.slice((i * fileNumAvg), (((i + 1) * fileNumAvg) + (files.length % workerThreads))); // 切分分派的filesArr
       } else {
         workerFileArr = files.slice((i * fileNumAvg), ((i + 1) * fileNumAvg)); // 切分分派的filesArr
       }
@@ -55,7 +61,7 @@ const runService = (sourcePath, destinationPath, quality, threads, files) => {
         countWorkerThreadsComplete += 1; // 計算線程完成數
 
         // 如果已回報「完成」線程數 === 開立的線程數，就彙整報告
-        if (countWorkerThreadsComplete === threads) {
+        if (countWorkerThreadsComplete === workerThreads) {
           console.info("\n總耗時：" + countTimeConsuming + " sec。處理檔案總數：" + countHandleNum + "。成功：" + countSuccessNum + "。失敗：" + countFailedNum);
           process.exit(); // 強制關閉所有進程
         }
