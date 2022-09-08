@@ -48,7 +48,7 @@ async function resizeImage(sourcePath, destinationPath, quality, file, buffer) {
   }
 }
 
-/* 
+/* 結構範例
 paramsObj: {
   fileArr: workerFileArr,
   start: i, // 起始
