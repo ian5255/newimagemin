@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
+    "tt": "node index.js -Q 70 -I src/assets/origin -O src/assets/result -T 3",
     "build": "pkg index.js -t node12-linux -c package.json"
   },
   "keywords": [
@@ -17,8 +18,6 @@
   "dependencies": {
     "commander": "^8.3.0",
     "fs": "0.0.1-security",
-    "globby": "^12.0.2",
-    "graceful-fs": "^4.2.8",
     "heic-convert": "^1.2.4",
     "pkg": "^5.4.1",
     "sharp": "^0.29.2"
